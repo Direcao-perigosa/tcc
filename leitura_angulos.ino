@@ -9,7 +9,10 @@
 #include <Wire.h>
 
 Adafruit_MPU6050 mpu;
+double gravity = 9.89;
 
+double ax, ay, az;
+double gx, gy, gz;
 void setup(void) {
   Serial.begin(115200);
   while (!Serial)
@@ -91,24 +94,32 @@ void setup(void) {
 
 void loop() {
   /* Get new sensor events with the readings */
+ 
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
+ax=a.acceleration.x;
+ ay=a.acceleration.y;
+ az= a.acceleration.z -gravity;
+ gx=g.gyro.x ;
+ gy=g.gyro.y;
+ gz=g.gyro.z;
+
 
   /* Print out the values */
   Serial.print("Acceleration X: ");
-  Serial.print(a.acceleration.x);
+  Serial.print(ax);
   Serial.print(", Y: ");
-  Serial.print(a.acceleration.y);
+  Serial.print(ay);
   Serial.print(", Z: ");
-  Serial.print(a.acceleration.z);
+  Serial.print(az);
   Serial.println(" m/s^2");
 
   Serial.print("Rotation X: ");
-  Serial.print(g.gyro.x);
+  Serial.print(gx);
   Serial.print(", Y: ");
-  Serial.print(g.gyro.y);
+  Serial.print(gy);
   Serial.print(", Z: ");
-  Serial.print(g.gyro.z);
+  Serial.print(gz);
   Serial.println(" rad/s");
 
   Serial.print("Temperature: ");
