@@ -1,42 +1,69 @@
-import socket
-import urllib.parse
-#server to run machine learning code
-#ajustar depois para o que for necessário 
+from flask import Flask, jsonify, request
+import tensorflow as tf
+import numpy as np
+import pandas as pd
 
+app = Flask(__name__)
 
-#Host do meu computador
-host = "192.168.1.17"  # Replace with your server's IP address
-port = 80  # Make sure it matches the port used in the Arduino code
+# Load your trained model
+model = tf.keras.models.load_model(r"C:\Users\danin\Desktop\LSTM_MODEL")
 
-# Create a TCP/IP socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Define a function to reshape the data
+def reshape(data):
+    # Assuming you already have the motion_data_test DataFrame and the LSTM model defined
 
-# Bind the socket to the host and port
-server_socket.bind((host, port))
+    # Sample data and new_data
+    # data = [0.667560, -0.038610, 0.231416, -0.054367, -0.007712, 0.225257]
 
-# Listen for incoming connections
-server_socket.listen(1)
-print(f"Server listening on {host}:{port}")
+    print("entrei no reshape")
+    new_data = pd.DataFrame([data],
+                            columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])
 
-while True:
-    # Wait for a client to connect
-    client_socket, client_address = server_socket.accept()
-    print(f"Client connected: {client_address[0]}:{client_address[1]}")
+    # Create a sequence with a minimum length of 20
+    min_seq_length = 20
+    duplicated_data = [data] * min_seq_length
 
-    # Receive and print the client's request
-    request = client_socket.recv(1024).decode('utf-8')
-    print("Received data from client:")
-    print(request)
+    # Convert the duplicated data to a DataFrame
+    motion_data_test = pd.DataFrame(duplicated_data, columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])
 
-    # Extract the value from the received data
-    query_params = urllib.parse.parse_qs(request.split('\n')[-1])
-    value = query_params.get('teste', [''])[0]
+    # Convert the DataFrame to a numpy array
+    motion_data_array = motion_data_test.to_numpy()
 
-    print(f"Value of 'teste': {value}")
+    # Reshape the array to match the LSTM input shape (None, 20, 6)
+    reshaped_motion_data = np.reshape(motion_data_array, (1, min_seq_length, 6))
+    return reshaped_motion_data
 
-    # Send a response back to the client
-    response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nHello, Client!"
-    client_socket.sendall(response.encode('utf-8'))
+def predict(reshaped_motion_data):
+    model = tf.keras.models.load_model(r"C:\Users\danin\Desktop\LSTM_MODEL")
 
-    # Close the connection with the client
-    client_socket.close()
+    predicted_values = model.predict(reshaped_motion_data)
+
+    # Define the threshold for classification
+    threshold = 0.5
+
+    # Convert the predicted values to binary classification (NORMAL or AGGRESSIVE)
+    predicted_class = np.where(predicted_values > threshold, "AGGRESSIVE", "NORMAL")
+
+    print("Predicted Class:", predicted_class)
+    return predicted_class.tolist()
+
+@app.route('/classify', methods=['POST'])
+def get_data():
+    try:
+        # Get the data from the request
+        data = request.json['data']
+        # Reshape the data using the reshape function
+        reshaped_data = reshape(data)
+        reshaped_data_list = reshaped_data.tolist()
+        predicted = predict(reshaped_data_list)
+        print(predicted)
+        json_reshape = jsonify({'data_array': predicted})
+        # Return the reshaped data as a response
+        return json_reshape
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+# The predict() function and '/connect' endpoint remain unchanged.
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
