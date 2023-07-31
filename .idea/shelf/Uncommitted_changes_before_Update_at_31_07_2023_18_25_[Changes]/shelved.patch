@@ -1,0 +1,287 @@
+Index: server.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, jsonify, request\r\nimport tensorflow as tf\r\nimport numpy as np\r\nimport pandas as pd\r\n\r\napp = Flask(__name__)\r\n\r\n# Load your trained model\r\nmodel = tf.keras.models.load_model(r\"C:\\Users\\danin\\Desktop\\LSTM_MODEL\")\r\n\r\n# Define a function to reshape the data\r\ndef reshape(data):\r\n    # Assuming you already have the motion_data_test DataFrame and the LSTM model defined\r\n\r\n    # Sample data and new_data\r\n    # data = [0.667560, -0.038610, 0.231416, -0.054367, -0.007712, 0.225257]\r\n\r\n    print(\"entrei no reshape\")\r\n    new_data = pd.DataFrame([data],\r\n                            columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])\r\n\r\n    # Create a sequence with a minimum length of 20\r\n    min_seq_length = 20\r\n    duplicated_data = [data] * min_seq_length\r\n\r\n    # Convert the duplicated data to a DataFrame\r\n    motion_data_test = pd.DataFrame(duplicated_data, columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])\r\n\r\n    # Convert the DataFrame to a numpy array\r\n    motion_data_array = motion_data_test.to_numpy()\r\n\r\n    # Reshape the array to match the LSTM input shape (None, 20, 6)\r\n    reshaped_motion_data = np.reshape(motion_data_array, (1, min_seq_length, 6))\r\n    return reshaped_motion_data\r\n\r\ndef predict(reshaped_motion_data):\r\n    model = tf.keras.models.load_model(r\"C:\\Users\\danin\\Desktop\\LSTM_MODEL\")\r\n\r\n    predicted_values = model.predict(reshaped_motion_data)\r\n\r\n    # Define the threshold for classification\r\n    threshold = 0.5\r\n\r\n    # Convert the predicted values to binary classification (NORMAL or AGGRESSIVE)\r\n    predicted_class = np.where(predicted_values > threshold, \"AGGRESSIVE\", \"NORMAL\")\r\n\r\n    print(\"Predicted Class:\", predicted_class)\r\n    return predicted_class.tolist()\r\n\r\n@app.route('/classify', methods=['POST'])\r\ndef get_data():\r\n    try:\r\n        # Get the data from the request\r\n        data = request.json['data']\r\n        # Reshape the data using the reshape function\r\n        reshaped_data = reshape(data)\r\n        reshaped_data_list = reshaped_data.tolist()\r\n        predicted = predict(reshaped_data_list)\r\n        print(predicted)\r\n        json_reshape = jsonify({'data_array': predicted})\r\n        # Return the reshaped data as a response\r\n        return json_reshape\r\n    except Exception as e:\r\n        return jsonify({'error': str(e)})\r\n\r\n# The predict() function and '/connect' endoint remain unchanged.\r\n\r\nif __name__ == '__main__':\r\n    app.run(host='0.0.0.0', port=5000)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server.py b/server.py
+--- a/server.py	(revision 969068090555be087a73157d5a700c3167775e7d)
++++ b/server.py	(date 1690835809055)
+@@ -1,3 +1,5 @@
++import os
++
+ from flask import Flask, jsonify, request
+ import tensorflow as tf
+ import numpy as np
+@@ -6,16 +8,15 @@
+ app = Flask(__name__)
+ 
+ # Load your trained model
+-model = tf.keras.models.load_model(r"C:\Users\danin\Desktop\LSTM_MODEL")
++print("Current working directory:", os.getcwd())
++
++model = tf.keras.models.load_model("./LSTM_MODEL")
+ 
+ # Define a function to reshape the data
++min_seq_length = 20
+ def reshape(data):
+-    # Assuming you already have the motion_data_test DataFrame and the LSTM model defined
+-
+-    # Sample data and new_data
+-    # data = [0.667560, -0.038610, 0.231416, -0.054367, -0.007712, 0.225257]
++    #data = [0.667560, -0.038610, 0.231416, -0.054367, -0.007712, 0.225257]
+ 
+-    print("entrei no reshape")
+     new_data = pd.DataFrame([data],
+                             columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])
+ 
+@@ -28,14 +29,13 @@
+ 
+     # Convert the DataFrame to a numpy array
+     motion_data_array = motion_data_test.to_numpy()
+-
++    print(motion_data_array)
+     # Reshape the array to match the LSTM input shape (None, 20, 6)
+     reshaped_motion_data = np.reshape(motion_data_array, (1, min_seq_length, 6))
++    print(reshaped_motion_data)
+     return reshaped_motion_data
+ 
+ def predict(reshaped_motion_data):
+-    model = tf.keras.models.load_model(r"C:\Users\danin\Desktop\LSTM_MODEL")
+-
+     predicted_values = model.predict(reshaped_motion_data)
+ 
+     # Define the threshold for classification
+@@ -52,18 +52,20 @@
+     try:
+         # Get the data from the request
+         data = request.json['data']
++        print("Received data:", data)  # Add this line to print the received data
+         # Reshape the data using the reshape function
+         reshaped_data = reshape(data)
++        print("Reshaped data:", reshaped_data)  # Add this line to print the reshaped data
+         reshaped_data_list = reshaped_data.tolist()
+         predicted = predict(reshaped_data_list)
+-        print(predicted)
++        print("Predicted:", predicted)  # Add this line to print the predicted values
+         json_reshape = jsonify({'data_array': predicted})
+         # Return the reshaped data as a response
+         return json_reshape
+     except Exception as e:
+         return jsonify({'error': str(e)})
+ 
+-# The predict() function and '/connect' endoint remain unchanged.
++# The predict() function and '/connect' endpoint remain unchanged.
+ 
+ if __name__ == '__main__':
+     app.run(host='0.0.0.0', port=5000)
+Index: teste_servidor.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/teste_servidor.py b/teste_servidor.py
+new file mode 100644
+--- /dev/null	(date 1690838425447)
++++ b/teste_servidor.py	(date 1690838425447)
+@@ -0,0 +1,43 @@
++import numpy as np
++import pandas as pd
++import json
++import tensorflow as tf
++from flask import Flask, jsonify, request
++
++app = Flask(__name__)
++
++def get_data(json_data):
++    # Sample JSON data with 20 objects
++
++    # Convert JSON data to a DataFrame
++    motion_data_test = pd.DataFrame(json_data, columns=['AccX', 'AccY', 'AccZ', 'GyroX', 'GyroY', 'GyroZ'])
++
++    # Convert the DataFrame to a numpy array
++    motion_data_array = motion_data_test.to_numpy()
++
++    # Reshape the array to match the LSTM input shape (None, 20, 6)
++    reshaped_motion_data = np.reshape(motion_data_array, (1, len(json_data), 6))
++
++    # Load the LSTM model
++    model = tf.keras.models.load_model("./LSTM_MODEL")
++
++    # Make prediction
++    predicted_values = model.predict(reshaped_motion_data)
++
++    # Define the threshold for classification
++    threshold = 0.5
++
++    # Convert the predicted values to binary classification (NORMAL or AGGRESSIVE)
++    predicted_class = np.where(predicted_values > threshold, "AGGRESSIVE", "NORMAL")
++    predicted_class = predicted_class.tolist()  # Convert the NumPy array to a Python list
++
++    return predicted_class
++
++@app.route('/get_data', methods=['POST'])
++def predict_data():
++    json_data = request.get_json()
++    predicted_class = get_data(json_data)
++    return jsonify({"Predicted Class": predicted_class})
++
++if __name__ == '__main__':
++    app.run(debug=True)
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"df923e4b-cdba-441d-a020-a541389ca433\" name=\"Changes\" comment=\"ajuste Pocfile\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2T73x26UT5kra3kgOZd5UGoqvM6\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\" selected=\"Python.pythonProject2\">\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"pythonProject2\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"pythonProject2\" type=\"PythonConfigurationType\" factoryName=\"Python\">\r\n      <module name=\"pythonProject2\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/server.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"df923e4b-cdba-441d-a020-a541389ca433\" name=\"Changes\" comment=\"\" />\r\n      <created>1690380534701</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1690380534701</updated>\r\n      <workItem from=\"1690380535813\" duration=\"4622000\" />\r\n      <workItem from=\"1690829406262\" duration=\"1571000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"procfile e requirements.txt\">\r\n      <created>1690829603601</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1690829603601</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"ajuste Pocfile\">\r\n      <created>1690830311439</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1690830311439</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"3\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"procfile e requirements.txt\" />\r\n    <MESSAGE value=\"ajuste Pocfile\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"ajuste Pocfile\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/pythonProject2$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1690391814893\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"true\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 969068090555be087a73157d5a700c3167775e7d)
++++ b/.idea/workspace.xml	(date 1690838737039)
+@@ -4,11 +4,22 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="ajuste Pocfile" />
++    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="adicionar requirements.txt">
++      <change afterPath="$PROJECT_DIR$/teste_servidor.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Python Script" />
++      </list>
++    </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -29,7 +40,12 @@
+     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+ }</component>
+-  <component name="RunManager" selected="Python.pythonProject2">
++  <component name="RecentsManager">
++    <key name="MoveFile.RECENT_KEYS">
++      <recent name="C:\Users\danin\PycharmProjects\pythonProject2" />
++    </key>
++  </component>
++  <component name="RunManager" selected="Flask server.Flask (teste_servidor.py)">
+     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+       <module name="pythonProject2" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+@@ -74,6 +90,65 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
++    <configuration name="teste_client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="pythonProject2" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="SCRIPT_NAME" value="C:\Users\danin\PycharmProjects\pythonProject2\teste_client.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <configuration name="Flask (server.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
++      <module name="pythonProject2" />
++      <option name="target" value="$PROJECT_DIR$/server.py" />
++      <option name="targetType" value="PATH" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="launchJavascriptDebuger" value="false" />
++      <method v="2" />
++    </configuration>
++    <configuration name="Flask (teste_servidor.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
++      <module name="pythonProject2" />
++      <option name="target" value="$PROJECT_DIR$/teste_servidor.py" />
++      <option name="targetType" value="PATH" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="launchJavascriptDebuger" value="false" />
++      <method v="2" />
++    </configuration>
++    <recent_temporary>
++      <list>
++        <item itemvalue="Flask server.Flask (teste_servidor.py)" />
++        <item itemvalue="Python.teste_client" />
++        <item itemvalue="Flask server.Flask (server.py)" />
++      </list>
++    </recent_temporary>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+@@ -84,7 +159,7 @@
+       <option name="presentableId" value="Default" />
+       <updated>1690380534701</updated>
+       <workItem from="1690380535813" duration="4622000" />
+-      <workItem from="1690829406262" duration="1571000" />
++      <workItem from="1690829406262" duration="8156000" />
+     </task>
+     <task id="LOCAL-00001" summary="procfile e requirements.txt">
+       <created>1690829603601</created>
+@@ -100,7 +175,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1690830311439</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="adicionar requirements.txt">
++      <created>1690831153453</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1690831153453</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -109,9 +191,14 @@
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="procfile e requirements.txt" />
+     <MESSAGE value="ajuste Pocfile" />
+-    <option name="LAST_COMMIT_MESSAGE" value="ajuste Pocfile" />
++    <MESSAGE value="adicionar requirements.txt" />
++    <option name="LAST_COMMIT_MESSAGE" value="adicionar requirements.txt" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
++    <SUITE FILE_PATH="coverage/pythonProject2$Flask__server_py_.coverage" NAME="Flask (server.py) Coverage Results" MODIFIED="1690835647063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
++    <SUITE FILE_PATH="coverage/pythonProject2$pythonProject2.coverage" NAME="pythonProject2 Coverage Results" MODIFIED="1690833197453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
++    <SUITE FILE_PATH="coverage/pythonProject2$teste.coverage" NAME="teste Coverage Results" MODIFIED="1690837435023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+     <SUITE FILE_PATH="coverage/pythonProject2$main.coverage" NAME="main Coverage Results" MODIFIED="1690391814893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/pythonProject2$Flask__teste_servidor_py_.coverage" NAME="Flask (teste_servidor.py) Coverage Results" MODIFIED="1690838425456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+   </component>
+ </project>
+\ No newline at end of file
