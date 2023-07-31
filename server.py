@@ -63,7 +63,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-# The predict() function and '/connect' endpoint remain unchanged.
+# The predict() function and '/connect' endoint remain unchanged.
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
