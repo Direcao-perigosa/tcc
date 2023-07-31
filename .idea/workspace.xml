@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="ajuste Pocfile">
-      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kaggle_mini .xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kaggle_mini.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kagle_test_motion_data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kagle_train_motion_data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/leitura_angulos.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wif+mpu_esp32" beforeDir="false" />
-    </list>
+    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="ajuste Pocfile" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -94,7 +84,7 @@
       <option name="presentableId" value="Default" />
       <updated>1690380534701</updated>
       <workItem from="1690380535813" duration="4622000" />
-      <workItem from="1690829406262" duration="1270000" />
+      <workItem from="1690829406262" duration="1571000" />
     </task>
     <task id="LOCAL-00001" summary="procfile e requirements.txt">
       <created>1690829603601</created>
