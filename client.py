@@ -1,7 +1,7 @@
 import requests
 
 # URL of the Flask API on the server
-api_url = 'http://127.0.0.1:5000/get_data'  # Replace with your server's IP
+api_url = 'http://8cd2-34-86-31-23.ngrok-free.app/get_data'  # Replace with your server's IP
 
 try:
     # Sample data to send to the server

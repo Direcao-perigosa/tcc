@@ -5,5 +5,5 @@
 ### 4. Dockerflie, requirements.txt, .dockerignore
 ### 5. Cloud build & deploy
 
-gcloud builds submit --tag gcr.io/direcao-ofensiva/predict_data
-gcloud run deploy --image gcr.io/direcao-ofensiva/predict_data --platform managed
+gcloud builds submit --tag gcr.io/tcclncc/predict_data
+gcloud run deploy --image gcr.io/tcclncc/predict_data --platform managed

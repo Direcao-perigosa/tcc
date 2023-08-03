@@ -1,5 +1,5 @@
 tensorflow
 gunicorn
-Flask
 pandas
 numpy
+flask
