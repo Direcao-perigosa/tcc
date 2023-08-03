@@ -1,6 +1,6 @@
+#https://www.youtube.com/watch?v=vieoHqt7pxo
 import numpy as np
 import pandas as pd
-import json
 import tensorflow as tf
 from flask import Flask, jsonify, request
 
@@ -38,6 +38,8 @@ def predict_data():
     json_data = request.get_json()
     predicted_class = get_data(json_data)
     return jsonify({"Predicted Class": predicted_class})
-
+@app.route('/')
+def hello():
+    return 'Hello, World!'
 if __name__ == '__main__':
     app.run(debug=True)
