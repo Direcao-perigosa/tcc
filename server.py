@@ -19,7 +19,7 @@ def get_data(json_data):
     reshaped_motion_data = np.reshape(motion_data_array, (1, len(json_data), 6))
 
     # Load the LSTM model
-    model = tf.keras.models.load_model("./LSTM_MODEL")
+    model = tf.keras.models.load_model("./MODELO_LSTM_TCC.h5")
 
     # Make prediction
     predicted_values = model.predict(reshaped_motion_data)
