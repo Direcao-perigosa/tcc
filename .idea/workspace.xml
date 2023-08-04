@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="Ajuste para abrir um só arquivo(MODELO_LSTM_TCC.H5)">
-      <change afterPath="$PROJECT_DIR$/app.yalm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/teste.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+    <list default="true" id="df923e4b-cdba-441d-a020-a541389ca433" name="Changes" comment="Adição dos arquivos antigos">
+      <change afterPath="$PROJECT_DIR$/wif+mpu_esp32.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -330,8 +326,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.client" />
-        <item itemvalue="Flask server.Flask (teste.py)" />
         <item itemvalue="Flask server.Flask (main.py)" />
+        <item itemvalue="Flask server.Flask (teste.py)" />
       </list>
     </recent_temporary>
   </component>
@@ -345,7 +341,7 @@
       <updated>1690380534701</updated>
       <workItem from="1690380535813" duration="4622000" />
       <workItem from="1690829406262" duration="1571000" />
-      <workItem from="1691005656944" duration="19020000" />
+      <workItem from="1691005656944" duration="21645000" />
     </task>
     <task id="LOCAL-00001" summary="procfile e requirements.txt">
       <created>1690829603601</created>
@@ -375,7 +371,14 @@
       <option name="project" value="LOCAL" />
       <updated>1691072233298</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Adição dos arquivos antigos">
+      <created>1691105931012</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1691105931012</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -386,15 +389,16 @@
     <MESSAGE value="ajuste Pocfile" />
     <MESSAGE value="add arquivos" />
     <MESSAGE value="Ajuste para abrir um só arquivo(MODELO_LSTM_TCC.H5)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajuste para abrir um só arquivo(MODELO_LSTM_TCC.H5)" />
+    <MESSAGE value="Adição dos arquivos antigos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adição dos arquivos antigos" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/google_deploy_tcc_flask$Flask__teste_py_.coverage" NAME="Flask (teste.py) Coverage Results" MODIFIED="1691090917827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/pythonProject2$Flask__server_py_.coverage" NAME="Flask (main.py) Coverage Results" MODIFIED="1691076343361" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonProject2$Flask__server_py_.coverage" NAME="Flask (main.py) Coverage Results" MODIFIED="1691107919972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pythonProject2$pythonProject2.coverage" NAME="pythonProject2 Coverage Results" MODIFIED="1691006158232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/pythonProject2$teste.coverage" NAME="teste Coverage Results" MODIFIED="1690837435023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pythonProject2$main.coverage" NAME="main Coverage Results" MODIFIED="1690391814893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pythonProject2$Flask__teste_servidor_py_.coverage" NAME="Flask (teste_servidor.py) Coverage Results" MODIFIED="1690838425456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pythonProject2$client.coverage" NAME="client Coverage Results" MODIFIED="1691105816357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonProject2$client.coverage" NAME="client Coverage Results" MODIFIED="1691108671768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -43,5 +43,20 @@ def predict_data():
 @app.route('/')
 def hello():
     return 'Hello, World!'
+
+
+@app.route('/return_data', methods=['POST'])
+def return_data():
+    try:
+        data = request.get_json()  # Obtem o JSON enviado na requisição POST
+
+        # Aqui você pode processar os dados recebidos, se necessário
+        # Por exemplo, você pode realizar algum cálculo ou manipulação dos dados
+
+        # Retorna os dados recebidos no mesmo formato JSON
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
