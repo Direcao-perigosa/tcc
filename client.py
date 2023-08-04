@@ -1,8 +1,8 @@
 import requests
 
 # URL of the Flask API on the server
-#api_url = 'http://8cd2-34-86-31-23.ngrok-free.app/get_data'  # Replace with your server's IP
-api_url = 'http://1a95-34-86-31-23.ngrok-free.app/teste'  # Replace with your server's IP
+api_url = 'https://da53-35-194-216-133.ngrok-free.app/get_data'  # Replace with your server's IP
+#api_url = 'https://da53-35-194-216-133.ngrok-free.app//teste'  # Replace with your server's IP
 try:
     # Sample data to send to the server
     data_to_send = [
@@ -166,18 +166,17 @@ try:
             "GyroY": -0.567890,
             "GyroZ": 0.123456
         },
-        # Add more dictionaries for the remaining 18 data samples
-        # ...
+
     ]
 
     # Send a POST request to the Flask API with the data as a JSON payload
-    data_teste = {"Teste":"Oi"}
-    response = requests.post(api_url, json=data_teste)
-    #response = requests.get(api_url)
+    #data_teste = {"Teste":"Oi"}
+    #response = requests.post(api_url, json=data_teste)
+    response = requests.post(api_url,json=data_to_send)
     if response.status_code == 200:
         try:
-            #predicted_class = response.json()['Predicted Class']
-            #print('Predicted Class:', predicted_class)
+            predicted_class = response.json()['Predicted Class']
+            print('Predicted Class:', predicted_class)
             print(response.text)
         except ValueError:
             print('Error: Invalid JSON response')
