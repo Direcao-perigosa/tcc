@@ -4,9 +4,9 @@
 const char* ssid = "LIVE TIM_1901_2G";
 const char* password = "danivalberlu";
 
-const char* serverAddress = "2fcb-104-196-19-194.ngrok-free.app";
+const char* serverAddress = "20d3-34-86-167-204.ngrok-free.app";
 const int serverPort = 80;
-const String endpoint = "/teste"; // Change this to the appropriate endpoint on your server
+const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
 const int numSamples = 20;
 float samples[numSamples][6]; // 6 values per sample (x, y, z for acceleration and inclination)
@@ -52,14 +52,6 @@ void loop() {
   sampleCount++;
 
   if (sampleCount >= numSamples) {
-    for(int i =0;i<numSamples;i++){
-      Serial.println(samples[i][0]);
-      Serial.println(samples[i][1]);
-      Serial.println(samples[i][2]);
-      Serial.println(samples[i][3]);
-      Serial.println(samples[i][4]);
-      Serial.println(samples[i][5]);
-    }
     // tudo ok aqui
     sendDataToServer();
     sampleCount = 0;
@@ -74,7 +66,6 @@ void sendDataToServer() {
     DynamicJsonDocument jsonDoc(4096); // Adjust the size as needed
 
     for (int i = 0; i < numSamples; i++) {
-      Serial.println("oi");
       JsonObject sampleObj = jsonDoc.createNestedObject();
       sampleObj["AccX"] = samples[i][0];
       sampleObj["AccY"] = samples[i][1];
@@ -84,9 +75,6 @@ void sendDataToServer() {
       sampleObj["GyroZ"] = samples[i][5];
     }
 
-   
-    Serial.println("Serialized JSON document:");
-    serializeJsonPretty(jsonDoc, Serial);
 
      String payload;
     serializeJson(jsonDoc, payload);
@@ -111,6 +99,4 @@ void sendDataToServer() {
   } else {
     Serial.println("Failed to connect to server");
   }
-
-  delay(5000000);
 }
