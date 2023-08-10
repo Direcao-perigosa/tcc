@@ -16,7 +16,7 @@ float fix_gz = gravity;
 
 const char* ssid = "LIVE TIM_1901_2G";
 const char* password = "danivalberlu";
-const char* serverAddress = "38c9-35-225-43-53.ngrok-free.app";
+const char* serverAddress = "5e29-35-225-43-53.ngrok-free.app";
 const int serverPort = 80;
 const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
