@@ -103,7 +103,6 @@ get_mpu();
 
 int cont =0;
 void loop() {
-  Serial.println("oi");
   // Simulate collecting data (replace with your actual data collection code)
   get_mpu();
   
@@ -115,14 +114,13 @@ void loop() {
   samples[3] = gx;
   samples[4] = gy;
   samples[5] = gz;
-  sendDataToServer();
-  Serial.println("oi aqui dnv");
-
+  String resultado = sendDataToServer();
+  Serial.println(resultado);
   delay(500); // Wait for 0.5 seconds before collecting next sample
 }
-void sendDataToServer() {
+String sendDataToServer() {
   WiFiClient client;
-
+  String result;
   if (client.connect(serverAddress, serverPort)) {
     DynamicJsonDocument jsonDoc(4096);
 
@@ -144,22 +142,37 @@ void sendDataToServer() {
     client.println();
     client.println(payload);
 
-    Serial.println("Data sent to server");
 
     unsigned long timeout = millis(); // Get the current time
 
     // Read and print the response from the server
-    while (client.connected() && millis() - timeout < 1000) { // Read for up to 5 seconds
-      if (client.available()) {
-        Serial.write(client.read());
-      }
-    }
 
-    client.stop();
-  } else {
-    Serial.println("Failed to connect to server");
+
+
+      while (client.connected() && millis() - timeout < 1000) { // Read for up to 5 seconds
+    if (client.available()) {
+      char c = client.read();
+      //Serial.write(c);
+
+      // Collect the characters until a closing curly brace is encountered
+      if (c == '}') {
+        result += c; // Include the closing curly brace in the result
+        break; // Exit the loop
+      }
+      result += c; // Append characters to the result
+    }
   }
+  // Serial.println("..."+result+"...");
+  String result_corrected =result.substring(218, result.length()-3);
+  // Parse the JSON response
+  
+  return result_corrected;
 }
+
+
+
+
+  }
 
 void setup_mpu(){
 if (!mpu.begin()) {
