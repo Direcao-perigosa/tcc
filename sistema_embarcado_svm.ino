@@ -30,7 +30,13 @@ float accelerationX =0;
   float inclinationX =0;
   float inclinationY = 0;
   float inclinationZ =0;
+
+const int PINO_LED = 12;
+const int PINO_LED_GND = 14;
 void setup() {
+  pinMode(PINO_LED, OUTPUT);
+  pinMode(PINO_LED_GND, OUTPUT);
+
   Serial.begin(9600);
   delay(100);
   setup_mpu();
@@ -115,7 +121,18 @@ void loop() {
   samples[4] = gy;
   samples[5] = gz;
   String resultado = sendDataToServer();
-  Serial.println(resultado);
+  Serial.println("."+resultado+".");
+  if(resultado == "NORMAL"){
+      digitalWrite(PINO_LED_GND, LOW);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(PINO_LED, LOW);   // turn the LED on (HIGH is the voltage level)
+
+  }else{
+    if(resultado=="AGGRESSIVE"){
+      digitalWrite(PINO_LED_GND, LOW);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(PINO_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+
+    }
+  }
   delay(500); // Wait for 0.5 seconds before collecting next sample
 }
 String sendDataToServer() {
