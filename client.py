@@ -1,8 +1,8 @@
 import requests
 
 # URL of the Flask API on the server
-api_url = 'http://61c8-35-225-43-53.ngrok-free.app/get_data'  # Replace with your server's IP
-#api_url = 'http://4cfe-35-225-43-53.ngrok-free.app/teste'  # Replace with your server's IP
+api_url = 'http://b737-35-221-141-21.ngrok-free.app/get_data'  # Replace with your server's IP
+#api_url = 'http://68e6-35-221-141-21.ngrok-free.app/teste'  # Replace with your server's IP
 try:
     # Sample data to send to the server
 
@@ -10,12 +10,12 @@ try:
     data_to_send = [
 
         {
-            "AccX": 0.09,
-            "AccY": 0.34,
-            "AccZ": 0.29,
-            "GyroX": 0.00,
-            "GyroY": 0.02,
-            "GyroZ": -0.02
+            "AccX": -0.66274977,
+            "AccY": -0.46277535,
+            "AccZ": -0.09979725,
+            "GyroX": 0.00870483,
+            "GyroY": -0.009773844,
+            "GyroZ": 0.046960264
         },
 
     ]
