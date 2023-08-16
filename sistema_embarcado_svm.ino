@@ -20,16 +20,13 @@ const char* serverAddress = "5e29-35-225-43-53.ngrok-free.app";
 const int serverPort = 80;
 const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
-const int numSamples = 20;
 float samples[6]; // 6 values per sample (x, y, z for acceleration and inclination)
-int sampleCount = 0;
 float accelerationX =0;
-  float accelerationY = 0;
-  float accelerationZ =0;
-  
-  float inclinationX =0;
-  float inclinationY = 0;
-  float inclinationZ =0;
+float accelerationY = 0;
+float accelerationZ =0;  
+float inclinationX =0;
+float inclinationY = 0;
+float inclinationZ =0;
 
 const int PINO_LED = 12;
 const int PINO_LED_GND = 14;
@@ -79,7 +76,6 @@ void setup() {
   if(fix_gz == -0.00){
     fix_gz=0;
   }
-Serial.println("Fix"+String(fix_ax)+","+String(fix_ay)+","+String(fix_az)+","+String(fix_gx)+","+String(fix_gy)+","+String(fix_gz));
 delay(3000);
 
 get_mpu();
