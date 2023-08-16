@@ -1,111 +1,102 @@
-#include "I2Cdev.h"
-#include "MPU6050.h"
-
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-#include "Wire.h"
-#endif
 #include <WiFi.h>
-
-#include "ArduinoJson.h"
+#include <ArduinoJson.h>
 
 const char* ssid = "LIVE TIM_1901_2G";
 const char* password = "danivalberlu";
-const char* host = "http://1a95-34-86-31-23.ngrok-free.app"; // Replace with your server's hostname or IP address
-const int port = 80;
 
-MPU6050 accelgyro;
-int16_t ax_atual, ay_atual, az_atual;
-int16_t gx_atual, gy_atual, gz_atual;
+const char* serverAddress = "20d3-34-86-167-204.ngrok-free.app";
+const int serverPort = 80;
+const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
-int16_t ax[20], ay[20], az[20];
-int16_t gx[20], gy[20], gz[20];
-
-int cont = 0;
+const int numSamples = 20;
+float samples[numSamples][6]; // 6 values per sample (x, y, z for acceleration and inclination)
+int sampleCount = 0;
 
 void setup() {
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    Wire.begin();
-#elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
-    Fastwire::setup(400, true);
-#endif
+  Serial.begin(9600);
+  delay(100);
 
-    Serial.begin(38400);
-    delay(2000);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
 
-    WiFi.begin(ssid, password);
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.println("Connecting to WiFi...");
+  // Initialize samples array
+  for (int i = 0; i < numSamples; i++) {
+    for (int j = 0; j < 6; j++) {
+      samples[i][j] = 0.0;
     }
-
-    Serial.println("Connected to WiFi");
-
-    accelgyro.initialize();
-    Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
-
-    enviar_dados();
+  }
 }
 
 void loop() {
-    accelgyro.getMotion6(&ax_atual, &ay_atual, &az_atual, &gx_atual, &gy_atual, &gz_atual);
-    String data = String(ax_atual) + "," + String(ay_atual) + "," + String(az_atual) + "," +
-                  String(gx_atual) + "," + String(gy_atual) + "," + String(gz_atual);
+  // Simulate collecting data (replace with your actual data collection code)
+  float accelerationX = random(0, 10);
+  float accelerationY = random(0, 10);
+  float accelerationZ = random(0, 10);
+  
+  float inclinationX = random(-45, 45);
+  float inclinationY = random(-45, 45);
+  float inclinationZ = random(-45, 45);
+  
+  // Store data in samples array
+  samples[sampleCount][0] = accelerationX;
+  samples[sampleCount][1] = accelerationY;
+  samples[sampleCount][2] = accelerationZ;
+  samples[sampleCount][3] = inclinationX;
+  samples[sampleCount][4] = inclinationY;
+  samples[sampleCount][5] = inclinationZ;
+  
+  sampleCount++;
 
-    if (cont == 20) {
-        enviar_dados();
-        for (int i = 0; i < 20; i++) {
-            ax[i] = 0;
-            ay[i] = 0;
-            az[i] = 0;
-            gx[i] = 0;
-            gy[i] = 0;
-            gz[i] = 0;
-        }
-        cont = 0;
-    } else {
-        ax[cont] = ax_atual;
-        ay[cont] = ay_atual;
-        az[cont] = az_atual;
-        gx[cont] = gx_atual;
-        gy[cont] = gy_atual;
-        gz[cont] = gz_atual;
-    }
-    cont = cont + 1;
-    delay(500); // Send data every 0.5 seconds
+  if (sampleCount >= numSamples) {
+    // tudo ok aqui
+    sendDataToServer();
+    sampleCount = 0;
+  }
+
+  delay(500); // Wait for 0.5 seconds before collecting next sample
 }
+void sendDataToServer() {
+  WiFiClient client;
 
-void enviar_dados() {
-    if (WiFi.status() == WL_CONNECTED) {
-        WiFiClient client;
+  if (client.connect(serverAddress, serverPort)) {
+    DynamicJsonDocument jsonDoc(4096); // Adjust the size as needed
 
-        if (client.connect(host, port)) {
-            Serial.println("Connected to server");
-
-            // Create a JSON object
-            StaticJsonDocument<128> jsonDoc;
-            jsonDoc["Teste"] = "Oi";
-
-            // Serialize the JSON object to a string
-            String data;
-            serializeJson(jsonDoc, data);
-
-            // Send data to the server
-            String url = "/teste"; // Replace with the endpoint path on your server
-            String request = "POST " + url + " HTTP/1.1\r\n" +
-                             "Host: " + host + "\r\n" +
-                             "Content-Type: application/json\r\n" +
-                             "Content-Length: " + String(data.length()) + "\r\n" +
-                             "Connection: close\r\n\r\n" +
-                             data;
-            Serial.println(request);
-            client.print(request);
-
-            // Resto do código...
-        } else {
-            Serial.println("Connection to server failed");
-        }
-    } else {
-        Serial.println("WiFi disconnected");
+    for (int i = 0; i < numSamples; i++) {
+      JsonObject sampleObj = jsonDoc.createNestedObject();
+      sampleObj["AccX"] = samples[i][0];
+      sampleObj["AccY"] = samples[i][1];
+      sampleObj["AccZ"] = samples[i][2];
+      sampleObj["GyroX"] = samples[i][3];
+      sampleObj["GyroY"] = samples[i][4];
+      sampleObj["GyroZ"] = samples[i][5];
     }
+
+
+     String payload;
+    serializeJson(jsonDoc, payload);
+
+    client.println("POST " + endpoint + " HTTP/1.1");
+    client.println("Host: " + String(serverAddress));
+    client.println("Content-Type: application/json");
+    client.println("Content-Length: " + String(payload.length()));
+    client.println();
+    client.println(payload);
+
+    Serial.println("Data sent to server");
+
+    // Read and print the response from the server
+    while (client.connected()) {
+      if (client.available()) {
+        Serial.write(client.read());
+      }
+    }
+
+    client.stop();
+  } else {
+    Serial.println("Failed to connect to server");
+  }
 }
