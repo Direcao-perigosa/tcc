@@ -16,7 +16,7 @@ float fix_gz = gravity;
 
 const char* ssid = "LIVE TIM_1901_2G";
 const char* password = "danivalberlu";
-const char* serverAddress = "01d2-35-221-141-21.ngrok-free.app";
+const char* serverAddress = "95f0-34-173-244-91.ngrok-free.app";
 const int serverPort = 80;
 const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
@@ -25,7 +25,7 @@ float accelerationX =0;
 float accelerationY = 0;
 float accelerationZ =0;  
 float inclinationX =0;
-float inclinationY = 0;
+float inclinationY =0;
 float inclinationZ =0;
 
 const int PINO_LED = 12;
@@ -99,8 +99,23 @@ get_mpu();
 
   }
   Serial.println("Carro começou a se movimentar");
-  
+  samples[0] = 10;
+  samples[1] = 10;
+  samples[2] = 10;
+  samples[3] = 10;
+  samples[4] = 10;
+  samples[5] = 10;
+  String resultado = sendDataToServer();
+  if(resultado == "NORMAL"){
+      digitalWrite(PINO_LED_GND, LOW);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(PINO_LED, LOW);   // turn the LED on (HIGH is the voltage level)
 
+  }else{
+    if(resultado=="AGGRESSIVE"){
+      digitalWrite(PINO_LED_GND, LOW);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(PINO_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+    }
+  }
 }
 
 int cont =0;
@@ -153,7 +168,7 @@ String sendDataToServer() {
     client.println();
     client.println(payload);
 
-
+    delay(5000);
     unsigned long timeout = millis(); // Get the current time
 
     // Read and print the response from the server
@@ -174,9 +189,10 @@ String sendDataToServer() {
         }
       }
   // Serial.println("..."+result+"...");
+  
+   // Serial.print(result.substring(218, result.length()-3));
   String result_corrected =result.substring(218, result.length()-3);
   // Parse the JSON response
-  
   return result_corrected;
 }
 
