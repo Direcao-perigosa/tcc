@@ -16,7 +16,7 @@ float fix_gz = gravity;
 
 const char* ssid = "LIVE TIM_1901_2G";
 const char* password = "danivalberlu";
-const char* serverAddress = "5e29-35-225-43-53.ngrok-free.app";
+const char* serverAddress = "01d2-35-221-141-21.ngrok-free.app";
 const int serverPort = 80;
 const String endpoint = "/get_data"; // Change this to the appropriate endpoint on your server
 
@@ -86,7 +86,7 @@ get_mpu();
    inclinationX = gx;
    inclinationY = gy;
    inclinationZ = gz;
-  const int threshold = 0.5; // Adjust this threshold value as needed
+  const int threshold = 0.7; // Adjust this threshold value as needed
 
   while((abs(accelerationX) >= threshold) && abs((accelerationY) >= threshold)  && (abs(accelerationZ) >= threshold)  && (abs(inclinationX) >= threshold) && (abs(inclinationY) >= threshold) && (abs(inclinationZ)>= threshold) ){
       get_mpu();
@@ -126,10 +126,8 @@ void loop() {
     if(resultado=="AGGRESSIVE"){
       digitalWrite(PINO_LED_GND, LOW);   // turn the LED on (HIGH is the voltage level)
       digitalWrite(PINO_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
-
     }
   }
-  delay(500); // Wait for 0.5 seconds before collecting next sample
 }
 String sendDataToServer() {
   WiFiClient client;
@@ -162,19 +160,19 @@ String sendDataToServer() {
 
 
 
-      while (client.connected() && millis() - timeout < 1000) { // Read for up to 5 seconds
-    if (client.available()) {
-      char c = client.read();
-      //Serial.write(c);
+      while (client.connected() && (millis() - timeout) < 1000) {
+        if (client.available()) {
+          char c = client.read();
+          //Serial.write(c);
 
-      // Collect the characters until a closing curly brace is encountered
-      if (c == '}') {
-        result += c; // Include the closing curly brace in the result
-        break; // Exit the loop
+          // Collect the characters until a closing curly brace is encountered
+          if (c == '}') {
+            result += c; // Include the closing curly brace in the result
+            break; // Exit the loop
+          }
+          result += c; // Append characters to the result
+        }
       }
-      result += c; // Append characters to the result
-    }
-  }
   // Serial.println("..."+result+"...");
   String result_corrected =result.substring(218, result.length()-3);
   // Parse the JSON response
